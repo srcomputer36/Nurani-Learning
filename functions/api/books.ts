@@ -21,7 +21,21 @@ export async function onRequestGet() {
     }
 
     const data = await response.json();
-    return new Response(JSON.stringify(data), {
+    
+    // Transform the Apps Script data to the format expected by the frontend
+    // This ensures that even if the Apps Script structure changes slightly, 
+    // the frontend receives a consistent structure.
+    const rawData = data.data || [];
+    const books = rawData.map((item: any) => ({
+      id: String(item.id || item.ID || Math.random().toString(36).substr(2, 9)),
+      bookName: String(item.bookName || item['Book Name'] || item.BookName || 'Untitled Book'),
+      fileId: String(item.fileId || item['File ID'] || item.FileId || ''),
+      category: String(item.category || item.Category || 'General'),
+      status: (item.status || item.Status || 'active').toLowerCase(),
+      order: parseInt(item.order || item.Order || '0', 10)
+    }));
+
+    return new Response(JSON.stringify({ success: true, data: books }), {
       headers: { 
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",

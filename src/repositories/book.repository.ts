@@ -43,12 +43,12 @@ export const BookRepository = {
       const books: Book[] = booksData
         .map((item: any) => {
           // Robust mapping for both camelCase and PascalCase
-          const id = item.ID || item.id || item.Id;
-          const bookName = item['Book Name'] || item.bookName || item.BookName || item.name;
-          const fileId = item['File ID'] || item.fileId || item.FileId || item.file_id;
-          const category = item.Category || item.category || 'General';
-          const status = (item.Status || item.status || 'active').toLowerCase();
-          const order = parseInt(item.Order || item.order || '0', 10);
+          const id = item.id || item.ID || item.Id;
+          const bookName = item.bookName || item['Book Name'] || item.BookName || item.name;
+          const fileId = item.fileId || item['File ID'] || item.FileId || item.file_id;
+          const category = item.category || item.Category || 'General';
+          const status = (item.status || item.Status || 'active').toLowerCase();
+          const order = parseInt(item.order || item.Order || '0', 10);
 
           return {
             id: String(id || Math.random().toString(36).substr(2, 9)),

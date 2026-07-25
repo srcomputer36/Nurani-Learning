@@ -59,7 +59,18 @@ async function startServer() {
         }
       });
       
-      res.json(response.data);
+      const data = response.data;
+      const rawData = data.data || [];
+      const books = rawData.map((item: any) => ({
+        id: String(item.id || item.ID || Math.random().toString(36).substr(2, 9)),
+        bookName: String(item.bookName || item['Book Name'] || item.BookName || 'Untitled Book'),
+        fileId: String(item.fileId || item['File ID'] || item.FileId || ''),
+        category: String(item.category || item.Category || 'General'),
+        status: (item.status || item.Status || 'active').toLowerCase(),
+        order: parseInt(item.order || item.Order || '0', 10)
+      }));
+
+      res.json({ success: true, data: books });
     } catch (error: any) {
       console.error('Book proxy error:', error.message);
       res.status(500).json({ success: false, message: 'Failed to fetch book list from remote server' });
