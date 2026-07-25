@@ -37,6 +37,27 @@ async function startServer() {
     }
   });
 
+  // Proxy for Google Apps Script to bypass CORS
+  app.get("/api/books", async (req, res) => {
+    try {
+      const scriptUrl = 'https://script.google.com/macros/s/AKfycbzpPv4xrFrVi0CzpQgqB_30aV2wVlZEakTAmGF1soKFMz9d6lHuu8NCqHIzqNBV8OSzgQ/exec';
+      console.log('Proxying book list request');
+      
+      const response = await axios.get(scriptUrl, {
+        timeout: 10000,
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+      });
+      
+      res.json(response.data);
+    } catch (error: any) {
+      console.error('Book proxy error:', error.message);
+      res.status(500).json({ success: false, message: 'Failed to fetch book list from remote server' });
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({

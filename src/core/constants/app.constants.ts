@@ -6,7 +6,7 @@
 export const APP_CONSTANTS = {
   APP_NAME: 'Nurani Learning',
   SHEET_NAME: 'Books',
-  API_BASE_URL: 'https://script.google.com/macros/s/AKfycbzpPv4xrFrVi0CzpQgqB_30aV2wVlZEakTAmGF1soKFMz9d6lHuu8NCqHIzqNBV8OSzgQ/exec',
+  API_BASE_URL: '/api/books',
   CACHE_KEYS: {
     BOOKS: 'nurani_books_cache',
     AUTH: 'nurani_auth_state',

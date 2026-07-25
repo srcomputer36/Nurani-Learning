@@ -38,15 +38,25 @@ export const BookRepository = {
       }
       
       const books: Book[] = booksData
-        .map((item: any) => ({
-          id: String(item.ID || item.id || ''),
-          bookName: String(item['Book Name'] || item.bookName || ''),
-          fileId: String(item['File ID'] || item.fileId || ''),
-          category: String(item.Category || item.category || ''),
-          status: String(item.Status || item.status || '').toLowerCase() as any,
-          order: parseInt(item.Order || item.order || '0', 10),
-        }))
-        .filter((book: Book) => book.status === 'active')
+        .map((item: any) => {
+          // Robust mapping for both camelCase and PascalCase
+          const id = item.ID || item.id || item.Id;
+          const bookName = item['Book Name'] || item.bookName || item.BookName || item.name;
+          const fileId = item['File ID'] || item.fileId || item.FileId || item.file_id;
+          const category = item.Category || item.category || 'General';
+          const status = (item.Status || item.status || 'active').toLowerCase();
+          const order = parseInt(item.Order || item.order || '0', 10);
+
+          return {
+            id: String(id || Math.random().toString(36).substr(2, 9)),
+            bookName: String(bookName || 'Untitled Book'),
+            fileId: String(fileId || ''),
+            category: String(category),
+            status: status as any,
+            order: isNaN(order) ? 0 : order,
+          };
+        })
+        .filter((book: Book) => book.status === 'active' && book.fileId)
         .sort((a: Book, b: Book) => a.order - b.order);
 
       return books;
