@@ -6,11 +6,17 @@
 import express from "express";
 import path from "path";
 import axios from "axios";
-import { createServer as createViteServer } from "vite";
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
+
+  app.use(express.json());
+
+  // Health check
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
 
   // Proxy for Google Drive PDF files to bypass CORS
   app.get("/api/proxy/pdf/:fileId", async (req, res) => {
@@ -22,6 +28,7 @@ async function startServer() {
       
       const response = await axios.get(url, {
         responseType: 'stream',
+        timeout: 30000,
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
@@ -29,6 +36,7 @@ async function startServer() {
 
       // Forward relevant headers
       res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Access-Control-Allow-Origin', '*');
       
       response.data.pipe(res);
     } catch (error: any) {
@@ -44,7 +52,7 @@ async function startServer() {
       console.log('Proxying book list request');
       
       const response = await axios.get(scriptUrl, {
-        timeout: 10000,
+        timeout: 15000,
         headers: {
           'Accept': 'application/json',
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -60,7 +68,8 @@ async function startServer() {
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
+    const { createServer } = await import("vite");
+    const vite = await createServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
