@@ -1,0 +1,6 @@
+{
+  "name": "Nurani Learning",
+  "description": "A premium Islamic educational application for reading Nurani PDF books with Google Drive and Sheets integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
