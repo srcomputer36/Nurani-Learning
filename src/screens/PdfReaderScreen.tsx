@@ -157,7 +157,7 @@ export const PdfReaderScreen = () => {
       opacity: 1,
       scale: 1,
       transition: {
-        type: 'spring',
+        type: 'spring' as const,
         stiffness: 300,
         damping: 30
       }
@@ -298,7 +298,6 @@ export const PdfReaderScreen = () => {
             onUpdate={onUpdate}
             wheelScaleFactor={0.002}
             draggableUnZoomed={true}
-            enforceBounds={true}
           >
             <div ref={pdfPageRef} className="flex justify-center items-center w-full h-full">
               <Document
