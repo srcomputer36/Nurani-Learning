@@ -25,15 +25,18 @@ export const BookRepository = {
       Logger.info('Fetching books from REST API:', apiUrl);
       
       const response = await api.get(apiUrl);
+      const responseData = response.data;
 
-      if (!response.data.success) {
-        throw new AppError(response.data.message || 'Server returned an error.', 'API_ERROR');
+      // Handle both {success: true, data: []} and direct array response
+      const success = responseData.success !== undefined ? responseData.success : true;
+      if (!success) {
+        throw new AppError(responseData.message || 'Server returned an error.', 'API_ERROR');
       }
 
-      const booksData = response.data.data;
+      const booksData = responseData.data !== undefined ? responseData.data : (Array.isArray(responseData) ? responseData : null);
 
-      if (!Array.isArray(booksData)) {
-        Logger.warn('Invalid response format from API:', response.data);
+      if (!booksData || !Array.isArray(booksData)) {
+        Logger.warn('Invalid response format from API:', responseData);
         return [];
       }
       
